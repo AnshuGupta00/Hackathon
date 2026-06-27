@@ -1,0 +1,446 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+
+/* ── Root container ── */
+.va-root {
+  font-family: 'Inter', sans-serif;
+  position: fixed;
+  bottom: 28px;
+  right: 28px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 12px;
+}
+
+/* ── Floating panel ── */
+.va-panel {
+  width: 360px;
+  background: #0f0f13;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55);
+  display: flex;
+  flex-direction: column;
+  max-height: 520px;
+}
+
+.va-panel-header {
+  padding: 14px 16px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.va-panel-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+/* ── Status dot ── */
+.va-status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #444;
+  transition: background 0.3s;
+}
+
+.va-status-dot.listening {
+  background: #7c5df9;
+  box-shadow: 0 0 0 3px rgba(124, 93, 249, 0.25);
+  animation: va-pulse 1.2s infinite;
+}
+
+.va-status-dot.thinking {
+  background: #f9c547;
+  box-shadow: 0 0 0 3px rgba(249, 197, 71, 0.2);
+}
+
+.va-status-dot.speaking {
+  background: #3ecf8e;
+  box-shadow: 0 0 0 3px rgba(62, 207, 142, 0.2);
+}
+
+@keyframes va-pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.5; }
+}
+
+/* ── Close button ── */
+.va-close-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 18px;
+  line-height: 1;
+  padding: 2px 4px;
+  border-radius: 6px;
+  transition: color 0.15s, background 0.15s;
+}
+
+.va-close-btn:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* ── Hint chips ── */
+.va-hints {
+  padding: 0 14px 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.va-hint {
+  font-size: 11px;
+  padding: 4px 9px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+  font-family: 'Inter', sans-serif;
+}
+
+.va-hint:hover {
+  background: rgba(124, 93, 249, 0.15);
+  color: #a78bfa;
+  border-color: rgba(124, 93, 249, 0.3);
+}
+
+/* ── Message feed ── */
+.va-feed {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
+}
+
+.va-feed::-webkit-scrollbar {
+  width: 4px;
+}
+
+.va-feed::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 4px;
+}
+
+/* ── Chat bubbles ── */
+.va-bubble {
+  max-width: 88%;
+  padding: 8px 12px;
+  border-radius: 14px;
+  font-size: 13px;
+  line-height: 1.55;
+  animation: va-fade-up 0.2s ease;
+}
+
+@keyframes va-fade-up {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.va-bubble.user {
+  align-self: flex-end;
+  background: #7c5df9;
+  color: #fff;
+  border-bottom-right-radius: 4px;
+}
+
+.va-bubble.assistant {
+  align-self: flex-start;
+  background: rgba(255, 255, 255, 0.07);
+  color: rgba(255, 255, 255, 0.9);
+  border-bottom-left-radius: 4px;
+}
+
+.va-bubble.system {
+  align-self: center;
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 11px;
+  border-radius: 8px;
+}
+
+/* ── Action confirmation pill ── */
+.va-action-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 6px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.va-action-pill.add {
+  background: rgba(62, 207, 142, 0.15);
+  color: #3ecf8e;
+}
+
+.va-action-pill.remove {
+  background: rgba(249, 100, 100, 0.15);
+  color: #f96464;
+}
+
+.va-action-pill.list {
+  background: rgba(124, 93, 249, 0.15);
+  color: #a78bfa;
+}
+
+/* ── Typing indicator ── */
+.va-typing {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  padding: 10px 12px;
+  background: rgba(255, 255, 255, 0.07);
+  border-radius: 14px;
+  border-bottom-left-radius: 4px;
+  align-self: flex-start;
+}
+
+.va-typing span {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.4);
+  animation: va-bounce 1.2s infinite;
+}
+
+.va-typing span:nth-child(2) { animation-delay: 0.2s; }
+.va-typing span:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes va-bounce {
+  0%, 60%, 100% { transform: translateY(0); }
+  30%            { transform: translateY(-5px); }
+}
+
+/* ── Live transcript bar ── */
+.va-transcript-bar {
+  padding: 8px 14px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.35);
+  min-height: 32px;
+  font-style: italic;
+  transition: color 0.2s;
+  font-family: 'Inter', sans-serif;
+}
+
+.va-transcript-bar.active {
+  color: rgba(255, 255, 255, 0.7);
+  font-style: normal;
+}
+
+/* ── Footer controls ── */
+.va-footer {
+  padding: 12px 14px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.va-text-input {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  padding: 8px 12px;
+  font-size: 13px;
+  color: #fff;
+  font-family: 'Inter', sans-serif;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.va-text-input::placeholder {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.va-text-input:focus {
+  border-color: rgba(124, 93, 249, 0.6);
+}
+
+.va-send-btn {
+  background: #7c5df9;
+  border: none;
+  cursor: pointer;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 15px;
+  transition: background 0.15s, transform 0.1s;
+  flex-shrink: 0;
+}
+
+.va-send-btn:hover  { background: #6a4de8; }
+.va-send-btn:active { transform: scale(0.93); }
+.va-send-btn:disabled {
+  background: rgba(124, 93, 249, 0.3);
+  cursor: not-allowed;
+}
+
+/* ── Mic button ── */
+.va-mic-btn {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.5);
+  transition: all 0.15s;
+  flex-shrink: 0;
+}
+
+.va-mic-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+.va-mic-btn.listening {
+  background: rgba(124, 93, 249, 0.2);
+  border-color: rgba(124, 93, 249, 0.5);
+  color: #a78bfa;
+}
+
+/* ── FAB trigger button ── */
+.va-fab {
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #7c5df9 0%, #5b3ed4 100%);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 24px rgba(124, 93, 249, 0.45);
+  transition: transform 0.15s, box-shadow 0.15s;
+  color: #fff;
+  position: relative;
+  overflow: hidden;
+}
+
+.va-fab:hover {
+  transform: scale(1.06);
+  box-shadow: 0 10px 30px rgba(124, 93, 249, 0.55);
+}
+
+.va-fab:active {
+  transform: scale(0.95);
+}
+
+.va-fab svg {
+  width: 26px;
+  height: 26px;
+}
+
+/* ── Sound bars icon (FAB idle state) ── */
+.va-bars {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  height: 22px;
+}
+
+.va-bars span {
+  display: block;
+  width: 3px;
+  border-radius: 2px;
+  background: #fff;
+  transition: height 0.3s ease;
+}
+
+/* idle: static stepped heights */
+.va-bars.idle span:nth-child(1) { height: 8px; }
+.va-bars.idle span:nth-child(2) { height: 14px; }
+.va-bars.idle span:nth-child(3) { height: 20px; }
+.va-bars.idle span:nth-child(4) { height: 14px; }
+.va-bars.idle span:nth-child(5) { height: 8px; }
+
+/* listening: bars animate like a live waveform */
+.va-bars.active span { animation: va-bar-wave 0.9s ease-in-out infinite; }
+.va-bars.active span:nth-child(1) { animation-delay: 0s;    height: 6px; }
+.va-bars.active span:nth-child(2) { animation-delay: 0.15s; height: 6px; }
+.va-bars.active span:nth-child(3) { animation-delay: 0.3s;  height: 6px; }
+.va-bars.active span:nth-child(4) { animation-delay: 0.15s; height: 6px; }
+.va-bars.active span:nth-child(5) { animation-delay: 0s;    height: 6px; }
+
+@keyframes va-bar-wave {
+  0%, 100% { height: 6px;  opacity: 0.7; }
+  50%       { height: 20px; opacity: 1; }
+}
+
+/* ── Mini waveform inside the footer mic button ── */
+.va-mic-bars {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  height: 14px;
+}
+
+.va-mic-bars span {
+  display: block;
+  width: 2px;
+  border-radius: 2px;
+  background: currentColor;
+  transition: height 0.3s ease;
+}
+
+.va-mic-bars.idle span:nth-child(1) { height: 5px; }
+.va-mic-bars.idle span:nth-child(2) { height: 9px; }
+.va-mic-bars.idle span:nth-child(3) { height: 13px; }
+.va-mic-bars.idle span:nth-child(4) { height: 9px; }
+.va-mic-bars.idle span:nth-child(5) { height: 5px; }
+
+.va-mic-bars.active span { animation: va-bar-wave-sm 0.9s ease-in-out infinite; }
+.va-mic-bars.active span:nth-child(1) { animation-delay: 0s; }
+.va-mic-bars.active span:nth-child(2) { animation-delay: 0.15s; }
+.va-mic-bars.active span:nth-child(3) { animation-delay: 0.3s; }
+.va-mic-bars.active span:nth-child(4) { animation-delay: 0.15s; }
+.va-mic-bars.active span:nth-child(5) { animation-delay: 0s; }
+
+@keyframes va-bar-wave-sm {
+  0%, 100% { height: 3px;  opacity: 0.6; }
+  50%       { height: 13px; opacity: 1; }
+}
+
+/* ── Unsupported browser notice ── */
+.va-unsupported {
+  padding: 20px 16px;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.va-unsupported strong {
+  color: #fff;
+  display: block;
+  margin-bottom: 4px;
+}

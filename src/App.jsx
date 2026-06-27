@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import VoiceAssistant from "./assets/VoiceAssistant";
 
 const COLORS = {
   bg: "#170f0f",
