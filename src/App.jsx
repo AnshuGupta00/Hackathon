@@ -159,11 +159,43 @@ export default function App() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tick, tasks, notifyMinutesBefore]);
 
+  function playNotificationSound() {
+    if (typeof window === "undefined") return;
+    try {
+      const Ctx = window.AudioContext || window.webkitAudioContext;
+      if (!Ctx) return;
+      const ctx = new Ctx();
+
+      const playTone = (freq, startTime, duration) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = "sine";
+        osc.frequency.value = freq;
+        gain.gain.setValueAtTime(0, startTime);
+        gain.gain.linearRampToValueAtTime(0.2, startTime + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.0001, startTime + duration);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(startTime);
+        osc.stop(startTime + duration);
+      };
+
+      const now = ctx.currentTime;
+      playTone(880, now, 0.18); // first note
+      playTone(1318.5, now + 0.12, 0.22); // second, higher note — a soft two-tone chime
+
+      setTimeout(() => ctx.close().catch(() => {}), 600);
+    } catch (e) {
+      console.warn("Could not play notification sound:", e);
+    }
+  }
+
   function sendBrowserNotification(title, body, tag) {
     if (typeof window === "undefined" || typeof Notification === "undefined") return;
     if (Notification.permission !== "granted") return;
     try {
       new Notification(title, { body, tag });
+      playNotificationSound();
     } catch (e) {
       console.warn("Notification failed:", e);
     }
