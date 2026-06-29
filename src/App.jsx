@@ -22,6 +22,29 @@ const COLORS = {
 
 const HABIT_PALETTE = [COLORS.accent, COLORS.amber, COLORS.green, "#EC4899", "#06d414"];
 
+// ---- persistence (localStorage — this is a real browser app, not a sandboxed
+// artifact, so this is the correct/normal place for this data to live) ----
+const STORAGE_PREFIX = "deadlinezero:";
+
+function loadStored(key, fallback) {
+  if (typeof window === "undefined" || !window.localStorage) return fallback;
+  try {
+    const raw = localStorage.getItem(STORAGE_PREFIX + key);
+    return raw !== null ? JSON.parse(raw) : fallback;
+  } catch {
+    return fallback;
+  }
+}
+
+function saveStored(key, value) {
+  if (typeof window === "undefined" || !window.localStorage) return;
+  try {
+    localStorage.setItem(STORAGE_PREFIX + key, JSON.stringify(value));
+  } catch (e) {
+    console.warn("Could not save to localStorage:", e);
+  }
+}
+
 function getTimeLeft(deadline) {
   const diff = new Date(deadline) - new Date();
   if (diff < 0) return { label: "Overdue", urgent: true, color: COLORS.red };
@@ -60,13 +83,13 @@ function UrgencyRing({ active }) {
 
 export default function App() {
   // ---- identity / onboarding ----
-  const [userName, setUserName] = useState("");
+  const [userName, setUserName] = useState(() => loadStored("userName", ""));
   const [onboardingName, setOnboardingName] = useState("");
 
-  // ---- core data (starts empty — populated per-user, not pre-filled with sample data) ----
-  const [tasks, setTasks] = useState([]);
-  const [habits, setHabits] = useState([]);
-  const [aiMessages, setAiMessages] = useState([]);
+  // ---- core data (loaded from localStorage if present, empty for a brand-new user) ----
+  const [tasks, setTasks] = useState(() => loadStored("tasks", []));
+  const [habits, setHabits] = useState(() => loadStored("habits", []));
+  const [aiMessages, setAiMessages] = useState(() => loadStored("aiMessages", []));
 
   const [activeNav, setActiveNav] = useState("dashboard");
   const [aiInput, setAiInput] = useState("");
@@ -85,7 +108,7 @@ export default function App() {
   const [newHabitName, setNewHabitName] = useState("");
 
   // ---- settings ----
-  const [notifyMinutesBefore, setNotifyMinutesBefore] = useState(30);
+  const [notifyMinutesBefore, setNotifyMinutesBefore] = useState(() => loadStored("notifyMinutesBefore", 30));
   const [savedMsg, setSavedMsg] = useState(false);
 
   // ---- notifications ----
@@ -98,6 +121,14 @@ export default function App() {
     const t = setInterval(() => setTick(x => x + 1), 60000);
     return () => clearInterval(t);
   }, []);
+
+  // Persist to localStorage whenever the underlying data changes, so a
+  // refresh (or closing the tab) doesn't lose anything.
+  useEffect(() => { saveStored("userName", userName); }, [userName]);
+  useEffect(() => { saveStored("tasks", tasks); }, [tasks]);
+  useEffect(() => { saveStored("habits", habits); }, [habits]);
+  useEffect(() => { saveStored("aiMessages", aiMessages); }, [aiMessages]);
+  useEffect(() => { saveStored("notifyMinutesBefore", notifyMinutesBefore); }, [notifyMinutesBefore]);
 
   useEffect(() => {
     if (chatEndRef.current) chatEndRef.current.scrollIntoView({ behavior: "smooth" });
@@ -159,6 +190,19 @@ export default function App() {
     if (typeof Notification !== "undefined" && Notification.permission === "default") {
       requestNotifPermission();
     }
+  }
+
+  function clearAllData() {
+    if (!window.confirm("This will erase all your tasks, habits, and settings on this device. Continue?")) return;
+    ["userName", "tasks", "habits", "aiMessages", "notifyMinutesBefore"].forEach(k => {
+      try { localStorage.removeItem(STORAGE_PREFIX + k); } catch {}
+    });
+    setUserName("");
+    setOnboardingName("");
+    setTasks([]);
+    setHabits([]);
+    setAiMessages([]);
+    setNotifyMinutesBefore(30);
   }
 
   const activeTasks = tasks.filter(t => t.status !== "done");
@@ -776,6 +820,19 @@ export default function App() {
                 Save settings
               </button>
               {savedMsg && <span style={{ marginLeft: 10, fontSize: 12, color: COLORS.green }}>✓ Saved</span>}
+
+              <div style={{ marginTop: 28, paddingTop: 16, borderTop: `1px solid ${COLORS.border}` }}>
+                <div style={{ fontSize: 11, color: COLORS.textMuted, marginBottom: 8 }}>
+                  Your tasks, habits, and name are saved on this device automatically.
+                </div>
+                <button
+                  className="btn-ghost"
+                  style={{ color: COLORS.red, borderColor: COLORS.red + "44" }}
+                  onClick={clearAllData}
+                >
+                  Clear all data
+                </button>
+              </div>
             </div>
           )}
 
@@ -887,6 +944,9 @@ export default function App() {
           </div>
         </div>
       )}
+
+      {/* AI voice assistant — floating button + panel, talks to the same task list */}
+      <VoiceAssistant tasks={tasks} onTasksChange={setTasks} />
     </div>
   );
 }
